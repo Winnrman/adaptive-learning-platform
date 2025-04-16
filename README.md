@@ -13,3 +13,6 @@ If you are developing a production application, we recommend using TypeScript an
 
 - tracking metrics
 - adaptive AI which learns the user's proficiency and adjusts the difficulty level accordingly.
+
+### April 16, 2025
+- Added new UI page (onboarding) for users to select / add their interests. This connects to the next step which is telling the AI what they want to learn.

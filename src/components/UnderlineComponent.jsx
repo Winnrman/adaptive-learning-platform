@@ -10,10 +10,12 @@ const UnderlineComponent = () => {
   const [translations, setTranslations] = useState({});
   const [hoveredWord, setHoveredWord] = useState(null);
 
-  const phrase = "Sushi to gohan kudasai.";
+  const phrase = "sushi to gohan kudasai";
 
   const getTranslation = async (word) => {
-    console.log("Accessing local translation for:", word);
+    if (!word) return "No word provided";
+    
+    // Return cached translation immediately if available
     if (translations[word]) {
       return translations[word];
     }
@@ -27,22 +29,33 @@ const UnderlineComponent = () => {
         body: JSON.stringify({ romanji: word }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
       const data = await response.json();
-      if (data.translation) {
-        setTranslations((prev) => ({ ...prev, [word]: data.translation }));
-        console.log("Fetched translation:", data.translation);
+      if (data?.translation) {
+        setTranslations((prev) => ({ 
+          ...prev, 
+          [word]: data.translation 
+        }));
         return data.translation;
       }
+      return "No translation available";
     } catch (error) {
-      console.error("Error fetching translation:", error);
+      console.error("Translation fetch failed:", error);
+      return "Translation service unavailable";
     }
-
-    return "Translation not found";
   };
 
   const handleMouseEnter = async (word) => {
+    if (!word) return;
+    
     setHoveredWord(word);
-    await getTranslation(word);
+    const translation = await getTranslation(word);
+    if (translation && !translations[word]) {
+      setTranslations(prev => ({ ...prev, [word]: translation }));
+    }
   };
 
   return (
@@ -59,11 +72,7 @@ const UnderlineComponent = () => {
                 </span>
               </TooltipTrigger>
               <TooltipContent>
-                <p>
-                  {hoveredWord === word
-                    ? translations[word] || "Loading..."
-                    : ""}
-                </p>
+                <p>{translations[word] || "Loading..."}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

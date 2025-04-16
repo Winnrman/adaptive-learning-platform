@@ -4,6 +4,10 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import MatchingGame from './components/MatchingGame'
 import UnderlineComponent from './components/UnderlineComponent'
+import FillInTheBlankComponent from './components/FillInTheBlankComponent'
+import QuizComponent from './components/QuizComponent'
+import IntroInterests from './components/IntroInterests'
+import LearningPreferences from './components/LearningPreferences'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -14,8 +18,12 @@ function App() {
         {/* <h1 className = "text-2xl font-semibold">Welcome to the Adaptive Learning Platform</h1> */}
         {/* <MatchingGame/> */}
 
-        <UnderlineComponent/>
+        {/* <UnderlineComponent/> */}
+        {/* <FillInTheBlankComponent/> */}
       {/* </div> */}
+      {/* <QuizComponent/> */}
+      {/* <IntroInterests/> */}
+      <LearningPreferences/>
     </>
   )
 }
