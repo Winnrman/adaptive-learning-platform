@@ -1,9 +1,18 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const LearningPreferences = ({ handleContinue }) => {
   const [selectedSpeed, setSelectedSpeed] = useState(null);
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [lessonPlan, setLessonPlan] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  //retrieve the interests which were passed through the state
+  const { selectedInterests } = location.state || {};
 
   const toggleReason = (reason) => {
     setSelectedReasons((prev) =>
@@ -14,6 +23,34 @@ const LearningPreferences = ({ handleContinue }) => {
   };
 
   const isComplete = selectedSpeed && selectedReasons.length > 0 && selectedTime;
+
+  const fetchLessonPlan = async (preferences) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:3001/generate-lesson-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        //send the interests as well as the preferences
+        body: JSON.stringify({
+          ...preferences,
+          interests: selectedInterests,
+        })
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch lesson plan');
+      }
+      const data = await response.json();
+      setLessonPlan(data);
+      // Optionally pass lesson plan to parent via handleContinue
+      handleContinue(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const preferenceBlock = (title, options, selected, toggleFn, multiple = false) => (
     <div className="mb-6">
@@ -39,6 +76,33 @@ const LearningPreferences = ({ handleContinue }) => {
       </div>
     </div>
   );
+
+  const renderContent = (content) => {
+    if (typeof content === 'string') {
+      return <p>{content}</p>;
+    }
+    
+    if (Array.isArray(content)) {
+      return (
+        <ul className="list-disc ml-6">
+          {content.map((item, index) => (
+            <li key={index}>{renderContent(item)}</li>
+          ))}
+        </ul>
+      );
+    }
+  
+    if (typeof content === 'object') {
+      return Object.keys(content).map((key) => (
+        <div key={key} className="mb-4">
+          <h5 className="font-semibold text-md">{key}:</h5>
+          {renderContent(content[key])}
+        </div>
+      ));
+    }
+  
+    return null;
+  };
 
   return (
     <div className = "w-screen h-screen flex flex-col justify-center items-center p-4">
@@ -75,17 +139,32 @@ const LearningPreferences = ({ handleContinue }) => {
           <div className="flex w-full justify-end">
             <button
               className="px-6 py-2 bg-blue-900 text-white font-semibold rounded-md hover:bg-blue-800 transition"
-              onClick={() => handleContinue({
+              onClick={() => fetchLessonPlan({
                 speed: selectedSpeed,
                 reasons: selectedReasons,
                 time: selectedTime,
               })}
+              disabled={loading}
             >
-              Continue
+              {loading ? 'Loading...' : 'Continue'}
             </button>
           </div>
         </>
       )}
+
+      {error && (
+        <div className="text-red-600 mt-4">
+          Error: {error}
+        </div>
+      )}
+
+{lessonPlan && (
+  <div className="mt-6 p-4 border rounded bg-gray-100">
+    <h3 className="text-lg font-semibold mb-4">Lesson Plan</h3>
+    {renderContent(lessonPlan)}
+  </div>
+)}
+
     </div>
     </div>
   );

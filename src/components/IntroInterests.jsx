@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const IntroInterests = () => {
   const [selectedInterests, setSelectedInterests] = useState([]);
   const [visibleCount, setVisibleCount] = useState(12);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
+
 
   const commonInterests = [
     "Anime",
@@ -72,6 +76,8 @@ const IntroInterests = () => {
 
   const handleContinue = () => {
     console.log("Selected interests:", selectedInterests);
+    //go to LearningPreferences and pass selectedInterests
+    navigate("/learning-preferences", { state: { selectedInterests } });
     // further logic here (API, routing, etc.)
   };
 

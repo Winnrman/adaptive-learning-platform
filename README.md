@@ -16,3 +16,7 @@ If you are developing a production application, we recommend using TypeScript an
 
 ### April 16, 2025
 - Added new UI page (onboarding) for users to select / add their interests. This connects to the next step which is telling the AI what they want to learn.
+
+### April 25, 2025
+- Incorporated the AI to generate the lesson plan based on the user's interests and hobbies.
+- BUGS: Lesson plan created is not specific enough and does not adhere to the user's interests.
