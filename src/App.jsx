@@ -10,7 +10,8 @@ import IntroInterests from './components/IntroInterests'
 import LearningPreferences from './components/LearningPreferences'
 import TestingPage from './components/TestingPage'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
+import JapaneseFlashcardManager from './components/JapaneseFlashcardManager'
+import NavigationPage from './pages/NavigationPage'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,7 +20,9 @@ function App() {
     <>
     <Router>
       <Routes>
-        <Route path="/" element={<IntroInterests/>} />
+        <Route path = "/" element = {<NavigationPage/>} />
+        {/* // <Route path="/" element={<JapaneseFlashcardManager/>} />
+        //<Route path="/" element={<IntroInterests/>} /> */}
         <Route path="/learning-preferences" element={<LearningPreferences/>} />
         <Route path="/testing-page" element={<TestingPage/>} />
         <Route path="/quiz-component" element={<QuizComponent/>} />
